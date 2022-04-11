@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--spring的配置文件：声明service ，dao， 工具类， 事务配置-->
+
+<!--    配置组件扫描-->
+    <context:component-scan base-package="com.fzx.Service" />
+<!--引入jdbc属性配置文件-->
+    <context:property-placeholder location="classpath:conf/jdbc.properties" />
+<!--配置阿里Druid数据库连接池-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          init-method="init" destroy-method="close">
+        <property name="url" value="${jdbc.url}" />
+        <property name="username" value="${jdbc.user}" />
+        <property name="password" value="${jdbc.password}" />
+    </bean>
+<!--配置sqlSessionFactoryBean-->
+    <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="configLocation" value="classpath:conf/mybatis.xml" />
+    </bean>
+<!--动态代理对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="factory" />
+        <property name="basePackage" value="com.fzx.Dao" />
+    </bean>
+
+    <!--事务配置-->
+</beans>
